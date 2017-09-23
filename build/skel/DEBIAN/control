@@ -1,0 +1,8 @@
+Package: wp-cli-duplicity
+Version: %VERSION%
+Depends: wp-cli
+Section: base
+Priority: optional
+Architecture: amd64
+Maintainer: Blobfolio LLC <hello@blobfolio.com>
+Description: Duplicity is a WP-CLI plugin for finding and removing duplicate attachments in WordPress.

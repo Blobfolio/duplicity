@@ -1,0 +1,32 @@
+{
+  "name": "duplicity",
+  "description": "Find and remove duplicate WordPress attachments.",
+  "version": "0.2.0",
+  "type": "library",
+  "homepage": "https:\/\/blobfolio.com",
+  "license": "WTFPL",
+  "authors": [
+    {
+      "name": "Josh Stoik",
+      "email": "josh@blobfolio.com",
+      "homepage": "https:\/\/blobfolio.com"
+    }
+  ],
+  "require": {
+    "blobfolio\/blob-common": "dev-master",
+    "blobfolio\/blob-domain": "dev-master",
+    "blobfolio\/blob-mimes": "dev-master",
+    "blobfolio\/blob-phone": "dev-master"
+  },
+  "config": {
+    "vendor-dir": "lib\/vendor",
+    "preferred-install": "dist"
+  },
+  "autoload": {
+    "psr-4": {
+      "blobfolio\\wp\\cli\\":"lib\/blobfolio\/wp\/cli"
+  	},
+  	"files": [
+  	]
+  }
+}
