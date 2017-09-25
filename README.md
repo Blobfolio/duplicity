@@ -104,8 +104,7 @@ Command reference is available in the usual fashion:
 # e.g. type any of the following from a site's root.
 wp duplicity list --help
 wp duplicity deduplicate --help
-wp duplicity regenerate-postmeta --help
-wp duplicity install --help
+wp duplicity postprocess --help
 ```
 
 __Please__ make sure you have a backup of your files and database before proceeding!
