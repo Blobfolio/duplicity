@@ -1,16 +1,16 @@
 <?php
 /**
- * Find and remove duplicate file attachments via WP-CLI.
+ * An experimental WP-CLI plugin for detecting and deleting duplicate WordPress file attachments.
  *
  * @package duplicity
  * @version 0.1.0-1
  *
  * @wordpress-plugin
- * Plugin Name: Duplicity - Attachment Linter
+ * Plugin Name: Duplicity Attachment Linter
  * Version: 0.1.0-1
  * Plugin URI: https://github.com/Blobfolio/duplicity
  * Info URI: https://raw.githubusercontent.com/Blobfolio/duplicity/master/release/duplicity.json
- * Description: Find and remove duplicate file attachments via WP-CLI.
+ * Description: An experimental WP-CLI plugin for detecting and deleting duplicate WordPress file attachments.
  * Author: Blobfolio, LLC
  * Author URI: https://blobfolio.com/
  * Text Domain: duplicity

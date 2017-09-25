@@ -27,12 +27,15 @@ class cli extends \WP_CLI_Command {
 	 * List Duplicate Attachments
 	 *
 	 * The same file might be uploaded to WordPress more than once.
-	 * This will scan the file system to identify duplicates.
+	 * This will scan the filesystem to identify duplicates and display
+	 * them here.
+	 *
+	 * No changes will be made.
 	 *
 	 * ## OPTIONS
 	 *
 	 * [--linted]
-	 * : Show entries that have already been deduplicated.
+	 * : Also show entries that have already been deduplicated.
 	 *
 	 * @param array $args Not used.
 	 * @param array $assoc_args Flags.
@@ -44,7 +47,7 @@ class cli extends \WP_CLI_Command {
 		$include_posts = !!Utils\get_flag_value($assoc_args, 'linted', false);
 
 		// Install the MU plugin script.
-		plugin::install();
+		utility::install_plugin();
 
 		$translated = array(
 			'File'=>__('File', 'duplicity'),
@@ -57,7 +60,7 @@ class cli extends \WP_CLI_Command {
 		if ($include_posts) {
 			WP_CLI::log('');
 
-			$posts = attachment::get_linted_attachments();
+			$posts = utility::get_linted_attachments();
 			if (count($posts)) {
 				$headers = array(
 					$translated['File'],
@@ -77,7 +80,7 @@ class cli extends \WP_CLI_Command {
 
 				Utils\format_items('table', $data, $headers);
 				WP_CLI::success(
-					__('Linted attachments:', 'duplicity') . " $total"
+					__('Deduplicated attachments:', 'duplicity') . " $total"
 				);
 			}
 		}
@@ -85,7 +88,7 @@ class cli extends \WP_CLI_Command {
 		// Search for duplicated files.
 		WP_CLI::log('');
 
-		$files = attachment::get_duplicate_files();
+		$files = utility::get_duplicate_files();
 		if (count($files)) {
 			$headers = array(
 				$translated['MD5'],
@@ -105,12 +108,12 @@ class cli extends \WP_CLI_Command {
 
 			Utils\format_items('table', $data, $headers);
 			WP_CLI::warning(
-				__('Duplicated file uploads:', 'duplicity') . " $total"
+				__('Files needing deduplication:', 'duplicity') . " $total"
 			);
 		}
 		else {
 			WP_CLI::success(
-				__('No duplicate files have been uploaded.', 'duplicity')
+				__('No files need deduplication.', 'duplicity')
 			);
 		}
 
@@ -128,67 +131,59 @@ class cli extends \WP_CLI_Command {
 	 * @return bool True/false.
 	 */
 	public function deduplicate() {
-		$results = attachment::deduplicate_files();
+		$results = utility::deduplicate_files();
 
 		// Install the MU plugin script.
-		plugin::install();
+		utility::install_plugin();
 
 		if (!$results['posts']) {
 			WP_CLI::success(
-				__('No attachments needed deduplicating.', 'duplicity')
+				__('No files need deduplication.', 'duplicity')
 			);
 			return true;
+		}
+
+		if ($results['bytes_saved'] > 1024 * 900) {
+			$results['bytes_saved'] = round($results['bytes_saved'] / 1024 / 900, 2) . 'MB';
+		}
+		elseif ($results['bytes_saved'] > 900) {
+			$results['bytes_saved'] = round($results['bytes_saved'] / 900, 2) . 'KB';
+		}
+		else {
+			$results['bytes_saved'] .= 'B';
 		}
 
 		WP_CLI::success(
 			__('Affected posts:', 'duplicity') . ' ' . count($results['posts'])
 		);
 		WP_CLI::success(
-			__('Files removed:', 'duplicity') . ' ' . count($results['deleted'])
+			__('Files removed:', 'duplicity') . ' ' . count($results['files_deleted']) . " ({$results['bytes_saved']})"
 		);
 
-		attachment::regenerate_postmeta();
+		utility::regenerate_postmeta();
 
 		return true;
 	}
 
 	/**
-	 * Rebuild Postmeta
+	 * Postprocess
 	 *
-	 * To help lighten database queries, deduplicated attachments each
-	 * get a postmeta entry indicating the main source.
+	 * Run the following postprocess operations (which normally happen
+	 * automatically).
 	 *
-	 * This postmeta is updated automatically when other operations are
-	 * performed, however this function can be used on its own if data
-	 * falls out of sync for whatever reason.
+	 * 1. Add a '_duplicity_id' metakey to all deduplicated attachments.
+	 * 2. Install or update the companion plugin to help with UX issues
+	 *    arising from multiple uploads sharing the same source file.
 	 *
 	 * @return bool True.
-	 *
-	 * @subcommand regenerate-postmeta
 	 */
-	public function regenerate_postmeta() {
-		attachment::regenerate_postmeta();
+	public function postprocess() {
+		utility::regenerate_postmeta();
 		WP_CLI::success(
-			__('Attachment postmeta has been updated.', 'duplicity')
+			__('Attachment metadata has been regenerated.', 'duplicity')
 		);
 
-		// Install the MU plugin script.
-		plugin::install();
-
-		return true;
-	}
-
-	/**
-	 * Install
-	 *
-	 * This will add a small helper plugin to the WPMU_PLUGIN_DIR. The
-	 * main purpose of this script is improving how deduplicated posts
-	 * and files are handled during delete actions, etc.
-	 *
-	 * @return bool True.
-	 */
-	public function install() {
-		$result = plugin::install();
+		$result = utility::install_plugin();
 
 		if (!$result) {
 			WP_CLI::error(

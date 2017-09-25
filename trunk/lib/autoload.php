@@ -7,9 +7,8 @@ spl_autoload_register(
         static $classes = null;
         if ($classes === null) {
             $classes = array(
-                'blobfolio\\wp\\duplicity\\attachment' => '/blobfolio/wp/duplicity/attachment.php',
                 'blobfolio\\wp\\duplicity\\cli' => '/blobfolio/wp/duplicity/cli.php',
-                'blobfolio\\wp\\duplicity\\plugin' => '/blobfolio/wp/duplicity/plugin.php',
+                'blobfolio\\wp\\duplicity\\utility' => '/blobfolio/wp/duplicity/utility.php',
                 'blobfolio\\wp\\duplicity\\vendor\\common\\bc' => '/vendor/blobfolio/blob-common/lib/blobfolio/common/bc.php',
                 'blobfolio\\wp\\duplicity\\vendor\\common\\cast' => '/vendor/blobfolio/blob-common/lib/blobfolio/common/cast.php',
                 'blobfolio\\wp\\duplicity\\vendor\\common\\constants' => '/vendor/blobfolio/blob-common/lib/blobfolio/common/constants.php',

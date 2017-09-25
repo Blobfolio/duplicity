@@ -1,8 +1,8 @@
 <?php
 /**
- * Duplicity: Attachments
+ * Duplicity: Utilities
  *
- * Everything we need to know about file attachments.
+ * Remove some clutter from the main CLI class.
  *
  * @package duplicity
  * @author  Blobfolio, LLC <hello@blobfolio.com>
@@ -14,16 +14,9 @@ use \blobfolio\wp\duplicity\vendor\common;
 use \WP_CLI;
 use \WP_CLI\Utils;
 
-class attachment {
+class utility {
 
 	const META_KEY = '_duplicity_id';
-
-	const SEARCH_REPLACE = array(
-		'return'=>true,
-		'parse'=>'STDOUT',
-		'launch'=>false,
-		'exit_error'=>false,
-	);
 
 	protected static $attachments;
 	protected static $checksums;
@@ -359,9 +352,10 @@ class attachment {
 	 */
 	public static function deduplicate_files() {
 		$out = array(
-			'deleted'=>array(),
+			'bytes_saved'=>0,
+			'files_deleted'=>array(),
+			'files_saved'=>array(),
 			'posts'=>array(),
-			'saved'=>array(),
 		);
 
 		// First, check to see if there are any duplicate files.
@@ -380,7 +374,7 @@ class attachment {
 			__('Files with duplicates:', 'duplicity') . ' ' . count($files)
 		);
 		WP_CLI::confirm(
-			__('Really proceed with deduplication? You should back up files and data before proceeding.', 'duplicity')
+			__('Really proceed with deduplication? Please back up files and data before proceeding!', 'duplicity')
 		);
 
 		// Loop it.
@@ -497,14 +491,18 @@ class attachment {
 				}
 
 				// Now we can remove the old file.
-				@unlink(static::$upload_dir . $v2);
-				$out['deleted'][] = $v2;
+				if (@is_file(static::$upload_dir . $v2)) {
+					$out['bytes_saved'] += @filesize(static::$upload_dir . $v2);
+					@unlink(static::$upload_dir . $v2);
+
+					$out['files_deleted'][] = $v2;
+				}
 			}
 
 			// Note which files we're keeping.
 			$saved = static::get_sister_files($primary);
 			foreach ($saved as $v2) {
-				$out['saved'][] = $v2;
+				$out['files_saved'][] = $v2;
 			}
 
 			// Reload the linted data because we've had to merge two or
@@ -557,6 +555,40 @@ class attachment {
 				);
 			}
 		}
+
+		return true;
+	}
+
+	/**
+	 * Install Plugin
+	 *
+	 * Install the helper plugin to the WPMU_PLUGIN_DIR.
+	 *
+	 * @return bool True/false.
+	 */
+	public static function install_plugin() {
+		if (!defined('WPMU_PLUGIN_DIR')) {
+			return false;
+		}
+
+		if (!@file_exists(WPMU_PLUGIN_DIR)) {
+			@mkdir(WPMU_PLUGIN_DIR, FS_CHMOD_DIR, true);
+			if (!@file_exists(WPMU_PLUGIN_DIR)) {
+				return false;
+			}
+		}
+
+		$script = DUPLICITY_ROOT . 'duplicity-mu.php';
+		if (!@file_exists($script)) {
+			return false;
+		}
+
+		$local = trailingslashit(WPMU_PLUGIN_DIR) . 'duplicity-mu.php';
+		@file_put_contents($local, @file_get_contents($script));
+		if (!@file_exists($local)) {
+			return false;
+		}
+		@chmod($local, FS_CHMOD_FILE);
 
 		return true;
 	}

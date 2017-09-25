@@ -124,7 +124,8 @@ add_action('attachment_fields_to_edit', 'duplicity_attachment_fields_to_edit', 2
  * Remove Delete Links
  *
  * WordPress does not provide adequate filters for intervening in the
- * media delete process, so instead we'll just hide any such links.
+ * media delete process, so instead we'll just hide any such links via a
+ * small Javascript snippet.
  *
  * @return string Javascript.
  */

@@ -1,7 +1,7 @@
 {
   "name": "duplicity",
-  "description": "Find and remove duplicate WordPress attachments.",
-  "version": "0.2.0",
+  "description": "An experimental WP-CLI plugin for detecting and deleting duplicate WordPress file attachments.",
+  "version": "0.1.0",
   "type": "library",
   "homepage": "https:\/\/blobfolio.com",
   "license": "WTFPL",

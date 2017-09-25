@@ -1,0 +1,132 @@
+# WordPress Blank Pot
+# Copyright (C) 2014 ...
+# This file is distributed under the GNU General Public License v2 or later.
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: "
+"Duplicity\n"
+"POT-Creation-Date: "
+"2017-09-24 20:13-0700\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Your "
+"Name <you@example.com>\n"
+"Language-Team: "
+"Blobfolio, LLC "
+"<hello@blobfolio.com>\n"
+"Report-Msgid-Bugs-To: "
+"Translator Name "
+"<translations@example."
+"com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/"
+"plain; charset=UTF-8\n"
+"Content-Transfer-"
+"Encoding: 8bit\n"
+"Plural-Forms: "
+"nplurals=2; plural=n != "
+"1;\n"
+"X-Textdomain-Support: "
+"yesX-Generator: Poedit "
+"1.6.4\n"
+"X-Poedit-SourceCharset: "
+"UTF-8\n"
+"X-Poedit-KeywordsList: "
+"__;_e;esc_html_e;"
+"esc_html_x:1,2c;"
+"esc_html__;esc_attr_e;"
+"esc_attr_x:1,2c;"
+"esc_attr__;_ex:1,2c;"
+"_nx:4c,1,2;"
+"_nx_noop:4c,1,2;_x:1,2c;"
+"_n:1,2;_n_noop:1,2;"
+"__ngettext:1,2;"
+"__ngettext_noop:1,2;_c,"
+"_nc:4c,1,2\n"
+"X-Poedit-Basepath: ..\n"
+"Language: en_US\n"
+"X-Generator: Poedit "
+"2.0.1\n"
+"X-Poedit-"
+"SearchPath-0: .\n"
+"X-Poedit-"
+"SearchPathExcluded-0: "
+"node_modules\n"
+"X-Poedit-"
+"SearchPathExcluded-1: "
+"lib/vendor\n"
+
+#: index.php:44
+msgid ""
+"This plugin is not "
+"multisite compatible."
+msgstr ""
+
+#: lib/blobfolio/wp/duplicity/cli.php:53
+msgid "File"
+msgstr ""
+
+#: lib/blobfolio/wp/duplicity/cli.php:54
+msgid "Files"
+msgstr ""
+
+#: lib/blobfolio/wp/duplicity/cli.php:56
+msgid "Post IDs"
+msgstr ""
+
+#: lib/blobfolio/wp/duplicity/cli.php:83
+msgid ""
+"Deduplicated attachments:"
+msgstr ""
+
+#: lib/blobfolio/wp/duplicity/cli.php:111
+msgid ""
+"Files needing "
+"deduplication:"
+msgstr ""
+
+#: lib/blobfolio/wp/duplicity/cli.php:116
+#: lib/blobfolio/wp/duplicity/cli.php:141
+msgid ""
+"No files need "
+"deduplication."
+msgstr ""
+
+#: lib/blobfolio/wp/duplicity/cli.php:157
+msgid "Affected posts:"
+msgstr ""
+
+#: lib/blobfolio/wp/duplicity/cli.php:160
+msgid "Files removed:"
+msgstr ""
+
+#: lib/blobfolio/wp/duplicity/cli.php:183
+msgid ""
+"Attachment metadata has "
+"been regenerated."
+msgstr ""
+
+#: lib/blobfolio/wp/duplicity/cli.php:190
+msgid ""
+"The companion plugin "
+"could not be installed."
+msgstr ""
+
+#: lib/blobfolio/wp/duplicity/cli.php:195
+msgid ""
+"The companion plugin has "
+"been installed."
+msgstr ""
+
+#: lib/blobfolio/wp/duplicity/utility.php:374
+msgid ""
+"Files with duplicates:"
+msgstr ""
+
+#: lib/blobfolio/wp/duplicity/utility.php:377
+msgid ""
+"Really proceed with "
+"deduplication? Please "
+"back up files and data "
+"before proceeding!"
+msgstr ""
