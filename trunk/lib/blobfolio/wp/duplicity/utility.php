@@ -122,6 +122,50 @@ class utility {
 			$official = array();
 		}
 
+		// We might also need to include "original" images left behind
+		// from using the built-in image editor.
+		global $wpdb;
+		$dbResult = $wpdb->get_results("
+			SELECT
+				m1.meta_value AS `file`,
+				m1.post_id,
+				m2.meta_value AS `data`
+			FROM
+				`{$wpdb->postmeta}` AS m1,
+				`{$wpdb->postmeta}` AS m2
+			WHERE
+				m1.meta_key='_wp_attached_file' AND
+				m2.meta_key='_wp_attachment_backup_sizes' AND
+				m1.post_id=m2.post_id AND
+				m1.post_id IN (SELECT DISTINCT `ID` FROM `{$wpdb->posts}` WHERE `post_type`='attachment' ORDER BY `ID` ASC)
+			ORDER BY m1.meta_value ASC
+		", ARRAY_A);
+		if (is_array($dbResult) && count($dbResult)) {
+			foreach ($dbResult as $Row) {
+				$Row['data'] = unserialize($Row['data']);
+				if (isset($Row['data']['full-orig'])) {
+					$file = dirname($Row['file']) . "/{$Row['data']['full-orig']['file']}";
+					if (@file_exists(static::$upload_dir . $file)) {
+						$official[$file] = 1;
+					}
+					// Remove the invalid backup entry.
+					else {
+						$wpdb->delete(
+							"{$wpdb->postmeta}",
+							array(
+								'meta_key'=>'_wp_attachment_backup_sizes',
+								'post_id'=>$Row['post_id'],
+							),
+							array(
+								'%s',
+								'%d'
+							)
+						);
+					}
+				}
+			}
+		}
+
 		$orphans = array();
 
 		$dir = new \RecursiveIteratorIterator(
