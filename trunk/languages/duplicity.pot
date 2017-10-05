@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: "
 "Duplicity\n"
 "POT-Creation-Date: "
-"2017-09-24 20:13-0700\n"
+"2017-10-05 13:52-0700\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Your "
 "Name <you@example.com>\n"
@@ -63,6 +63,7 @@ msgid ""
 msgstr ""
 
 #: lib/blobfolio/wp/duplicity/cli.php:53
+#: lib/blobfolio/wp/duplicity/cli.php:197
 msgid "File"
 msgstr ""
 
@@ -92,38 +93,73 @@ msgid ""
 "deduplication."
 msgstr ""
 
-#: lib/blobfolio/wp/duplicity/cli.php:157
+#: lib/blobfolio/wp/duplicity/cli.php:149
 msgid "Affected posts:"
 msgstr ""
 
-#: lib/blobfolio/wp/duplicity/cli.php:160
+#: lib/blobfolio/wp/duplicity/cli.php:152
+#: lib/blobfolio/wp/duplicity/cli.php:246
 msgid "Files removed:"
 msgstr ""
 
-#: lib/blobfolio/wp/duplicity/cli.php:183
+#: lib/blobfolio/wp/duplicity/cli.php:184
+msgid ""
+"Really search for "
+"orphans in all uploads "
+"subdirectories? Plugins "
+"might store their own "
+"files there; this could "
+"be dangerous!"
+msgstr ""
+
+#: lib/blobfolio/wp/duplicity/cli.php:191
+msgid ""
+"No orphaned file "
+"attachments were found!"
+msgstr ""
+
+#: lib/blobfolio/wp/duplicity/cli.php:210
+msgid ""
+"Orphaned attachments:"
+msgstr ""
+
+#: lib/blobfolio/wp/duplicity/cli.php:218
+msgid ""
+"Really remove these "
+"files? Please back up "
+"before proceeding!"
+msgstr ""
+
+#: lib/blobfolio/wp/duplicity/cli.php:252
+msgid ""
+"Not all files could be "
+"removed."
+msgstr ""
+
+#: lib/blobfolio/wp/duplicity/cli.php:274
 msgid ""
 "Attachment metadata has "
 "been regenerated."
 msgstr ""
 
-#: lib/blobfolio/wp/duplicity/cli.php:190
+#: lib/blobfolio/wp/duplicity/cli.php:281
 msgid ""
 "The companion plugin "
 "could not be installed."
 msgstr ""
 
-#: lib/blobfolio/wp/duplicity/cli.php:195
+#: lib/blobfolio/wp/duplicity/cli.php:286
 msgid ""
 "The companion plugin has "
 "been installed."
 msgstr ""
 
-#: lib/blobfolio/wp/duplicity/utility.php:374
+#: lib/blobfolio/wp/duplicity/utility.php:539
 msgid ""
 "Files with duplicates:"
 msgstr ""
 
-#: lib/blobfolio/wp/duplicity/utility.php:377
+#: lib/blobfolio/wp/duplicity/utility.php:542
 msgid ""
 "Really proceed with "
 "deduplication? Please "
