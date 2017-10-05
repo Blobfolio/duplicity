@@ -40,6 +40,16 @@ class utility {
 	}
 
 	/**
+	 * Get Upload Dir
+	 *
+	 * @return string Directory.
+	 */
+	public static function get_upload_dir() {
+		static::load_paths();
+		return static::$upload_dir;
+	}
+
+	/**
 	 * Load Attachments
 	 *
 	 * Find all WordPress file attachments and store them in an array.
@@ -87,6 +97,161 @@ class utility {
 	public static function get_attachments($refresh=false) {
 		static::load_attachments($refresh);
 		return static::$attachments;
+	}
+
+	/**
+	 * Get Orphans
+	 *
+	 * @param bool $all Look everywhere.
+	 * @return array Orphans.
+	 */
+	public static function get_orphans($all=false) {
+		static::load_paths();
+		$official = static::get_attachments(true);
+		$orphans = array();
+
+		// Start by getting the file paths we expect to find.
+		if (count($official)) {
+			$official = array_flip($official);
+			foreach ($official as $k=>$v) {
+				$official[$k] = 1;
+			}
+			ksort($official);
+		}
+		else {
+			$official = array();
+		}
+
+		$orphans = array();
+
+		$dir = new \RecursiveIteratorIterator(
+			new \RecursiveDirectoryIterator(
+				static::$upload_dir,
+				\RecursiveDirectoryIterator::SKIP_DOTS |
+				\RecursiveDirectoryIterator::CURRENT_AS_PATHNAME |
+				\RecursiveDirectoryIterator::UNIX_PATHS
+			)
+		);
+		$base_length = strlen(static::$upload_dir);
+		foreach ($dir as $file) {
+			// Early and easy skips.
+			if (
+				(0 !== strpos($file, static::$upload_dir)) ||
+				preg_match('/\.(html?|php|js|css)(\.(gz|br))?$/i', $file)
+			) {
+				continue;
+			}
+
+			// Find the relative dir.
+			$relative = substr($file, $base_length);
+
+			// We can skip this if it is official.
+			if (isset($official[$relative])) {
+				continue;
+			}
+
+			$filepath = trailingslashit(dirname($relative));
+			$filebase = basename($relative);
+			$filename = pathinfo($relative, PATHINFO_FILENAME);
+			$fileext = pathinfo($relative, PATHINFO_EXTENSION);
+
+			// Make sure the subdirs are basic WP material.
+			if (
+				!$all &&
+				('/' !== $filepath) &&
+				!preg_match('#^\d{4}/\d{2}/$#', $filepath)
+			) {
+				continue;
+			}
+
+			// WebP is handled a bit differently. It might take two
+			// passes to clear them entirely.
+			if (strtolower($fileext) === 'webp') {
+				if (false === static::webp_sister($relative)) {
+					$orphans[] = $relative;
+				}
+				continue;
+			}
+
+			// Regular thumbnail?
+			if (preg_match('/(\-\d+x\d+)$/', $filename, $match)) {
+				if ($match[0]) {
+					$filename_original = substr($filename, 0, 0 - strlen($match[0]));
+					if (isset($official["{$filepath}{$filename_original}.{$fileext}"])) {
+						continue;
+					}
+				}
+			}
+
+			// PDF thumbnail?
+			if (preg_match('/(\-pdf(\-\d+x\d+)?)$/', $filename, $match)) {
+				if ($match[0]) {
+					$filename_original = substr($filename, 0, 0 - strlen($match[0]));
+					if (isset($official["{$filepath}{$filename_original}.pdf"])) {
+						continue;
+					}
+				}
+			}
+
+			// Post Thumbnail Editor garbage.
+			if (preg_match('/\-\d+x\d+\-\d{10,}$/', $filename, $match)) {
+				if ($match[0]) {
+					// For reasons that aren't clear, sometimes this
+					// pattern is tossed onto the full source basename,
+					// while other times it is built more like a
+					// traditional thumbnail.
+					$filebase_original = substr($filename, 0, 0 - strlen($match[0]));
+					if (
+						isset($official["{$filepath}{$filebase_original}"]) ||
+						isset($official["{$filepath}{$filebase_original}.{$fileext}"])
+					) {
+						continue;
+					}
+				}
+			}
+
+			// Probably an orphan.
+			$orphans[] = $relative;
+		}
+
+		sort($orphans);
+		return $orphans;
+	}
+
+	/**
+	 * Look for WebP Companion
+	 *
+	 * WebP images tend to be copies of traditional media. This will
+	 * check to see whether or not a non-webp file exists.
+	 *
+	 * @param string $webp WebP path (relative).
+	 * @return string|bool Sister path or false.
+	 */
+	protected static function webp_sister($webp) {
+		if (
+			!$webp ||
+			!is_string($webp) ||
+			!preg_match('/\.webp$/i', $webp) ||
+			!file_exists(static::$upload_dir . $webp)
+		) {
+			return false;
+		}
+
+		$exts = array(
+			'gif',
+			'jpg',
+			'jpeg',
+			'png',
+		);
+
+		$webp = substr($webp, 0, -4);
+		foreach ($exts as $ext) {
+			if (file_exists(static::$upload_dir . "{$webp}{$ext}")) {
+				return "{$webp}{$ext}";
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -591,5 +756,29 @@ class utility {
 		@chmod($local, FS_CHMOD_FILE);
 
 		return true;
+	}
+
+	/**
+	 * Nice Bytes
+	 *
+	 * Convert bytes to a more compact unit for friendlier display.
+	 *
+	 * @param int $bytes Bytes.
+	 * @return string Size.
+	 */
+	public static function nice_bytes($bytes) {
+		$bytes = (int) $bytes;
+		if ($bytes < 0) {
+			$bytes = 0;
+		}
+
+		if ($bytes > 1024 * 900) {
+			return round($bytes / 1024 / 1024, 2) . 'MB';
+		}
+		elseif ($bytes > 900) {
+			return round($bytes / 1024, 2) . 'KB';
+		}
+
+		return "{$bytes}B";
 	}
 }

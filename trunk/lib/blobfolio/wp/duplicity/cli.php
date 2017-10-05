@@ -143,15 +143,7 @@ class cli extends \WP_CLI_Command {
 			return true;
 		}
 
-		if ($results['bytes_saved'] > 1024 * 900) {
-			$results['bytes_saved'] = round($results['bytes_saved'] / 1024 / 900, 2) . 'MB';
-		}
-		elseif ($results['bytes_saved'] > 900) {
-			$results['bytes_saved'] = round($results['bytes_saved'] / 900, 2) . 'KB';
-		}
-		else {
-			$results['bytes_saved'] .= 'B';
-		}
+		$results['bytes_saved'] = utility::nice_bytes($results['bytes_saved']);
 
 		WP_CLI::success(
 			__('Affected posts:', 'duplicity') . ' ' . count($results['posts'])
@@ -161,6 +153,105 @@ class cli extends \WP_CLI_Command {
 		);
 
 		utility::regenerate_postmeta();
+
+		return true;
+	}
+
+	/**
+	 * Orphans
+	 *
+	 * List orphaned files in the uploads directory.
+	 *
+	 * ## OPTIONS
+	 *
+	 * [--all]
+	 * : This option will include all upload subdirectories in its
+	 * search. You almost certainly do not want to do this.
+	 *
+	 * [--clean]
+	 * : Remove orphaned files. (Be careful!)
+	 *
+	 * @param array $args Not used.
+	 * @param array $assoc_args Flags.
+	 * @return bool True/false.
+	 */
+	public function orphans($args, $assoc_args=array()) {
+		$all = !!Utils\get_flag_value($assoc_args, 'all', false);
+		$clean = !!Utils\get_flag_value($assoc_args, 'clean', false);
+
+		if ($all) {
+			WP_CLI::confirm(
+				__('Really search for orphans in all uploads subdirectories? Plugins might store their own files there; this could be dangerous!', 'duplicity')
+			);
+		}
+
+		$orphans = utility::get_orphans($all);
+		if (!count($orphans)) {
+			WP_CLI::success(
+				__('No orphaned file attachments were found!', 'duplicity')
+			);
+			return true;
+		}
+
+		$translated = array(
+			'File'=>__('File', 'duplicity'),
+		);
+
+		$headers = array_values($translated);
+		$data = array();
+		foreach ($orphans as $v) {
+			$data[] = array(
+				$translated['File']=>$v,
+			);
+		}
+
+		Utils\format_items('table', $data, $headers);
+		WP_CLI::warning(
+			__('Orphaned attachments:', 'duplicity') . ' ' . count($orphans)
+		);
+
+		if (!$clean) {
+			return true;
+		}
+
+		WP_CLI::confirm(
+			__('Really remove these files? Please back up before proceeding!', 'duplicity')
+		);
+
+		// Count up the bytes saved.
+		$total_bytes = 0;
+		$total_deleted = 0;
+		$upload_dir = utility::get_upload_dir();
+
+		// Loop it.
+		$progress = Utils\make_progress_bar('Removing orphaned attachments.', count($orphans));
+		foreach ($orphans as $v) {
+			$progress->tick();
+
+			$path = $upload_dir . $v;
+			if (!@is_file($path)) {
+				continue;
+			}
+
+			$total_bytes += @filesize($path);
+			@unlink($path);
+			if (!@file_exists($path)) {
+				$total_deleted++;
+			}
+		}
+		$progress->finish();
+
+		if ($total_deleted > 0) {
+			WP_CLI::success(
+				__('Files removed:', 'duplicity') . " $total_deleted (" . utility::nice_bytes($total_bytes) . ')'
+			);
+		}
+
+		if (count($orphans) !== $total_deleted) {
+			WP_CLI::warning(
+				__('Not all files could be removed.', 'duplicity')
+			);
+		}
 
 		return true;
 	}
