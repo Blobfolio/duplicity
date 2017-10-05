@@ -96,6 +96,7 @@ Duplicity includes the following commands for managing duplicate file attachment
 | ----------- | -------------------------------------- |
 | list        | Show duplicate and deduplicated files  |
 | deduplicate | Run file deduplication                 |
+| orphans     | Show and/or remove orphaned files      |
 | postprocess | Manually run postprocess operations    |
 
 Command reference is available in the usual fashion:
@@ -104,6 +105,7 @@ Command reference is available in the usual fashion:
 # e.g. type any of the following from a site's root.
 wp duplicity list --help
 wp duplicity deduplicate --help
+wp duplicity orphans --help
 wp duplicity postprocess --help
 ```
 
