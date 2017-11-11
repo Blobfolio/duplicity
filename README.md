@@ -45,8 +45,8 @@ apt-get install apt-transport-https
 # Debian Stretch
 echo "deb [arch=amd64] https://apt.blobfolio.com/debian/ stretch main" > /etc/apt/sources.list.d/blobfolio.list
 
-# Ubuntu Zesty
-echo "deb [arch=amd64] https://apt.blobfolio.com/debian/ zesty main" > /etc/apt/sources.list.d/blobfolio.list
+# Ubuntu Artful
+echo "deb [arch=amd64] https://apt.blobfolio.com/debian/ artful main" > /etc/apt/sources.list.d/blobfolio.list
 
 # Update APT sources
 apt-get update
