@@ -16,6 +16,7 @@ When duplicates are detected, all but the prototype file are deleted from the fi
 4. [License](#license)
 
 
+&nbsp;
 
 ## Requirements
 
@@ -26,6 +27,7 @@ When duplicates are detected, all but the prototype file are deleted from the fi
 Duplicity is __not__ compatible with WordPress Multi-Site installations.
 
 
+&nbsp;
 
 ## Installation
 
@@ -87,6 +89,7 @@ wp duplicity --help
 ```
 
 
+&nbsp;
 
 ## Use
 
@@ -112,6 +115,7 @@ wp duplicity postprocess --help
 __Please__ make sure you have a backup of your files and database before proceeding!
 
 
+&nbsp;
 
 ## License
 
@@ -132,3 +136,14 @@ This work is free. You can redistribute it and/or modify it under the terms of t
     TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
     
     0. You just DO WHAT THE FUCK YOU WANT TO.
+
+### Donations
+
+<table>
+  <tbody>
+    <tr>
+      <td width="200"><img src="https://blobfolio.com/wp-content/themes/b3/svg/btc-github.svg" width="200" height="200" alt="Bitcoin QR" /></td>
+      <td width="450">If you have found this work useful and would like to contribute financially, Bitcoin tips are always welcome!<br /><br /><strong>1PQhurwP2mcM8rHynYMzzs4KSKpBbVz5is</strong></td>
+    </tr>
+  </tbody>
+</table>
